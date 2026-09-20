@@ -34,8 +34,9 @@
 
   /* Header */
   /* Pinned green bar: Safari tints the status bar from it. Safe-area inset replaces the design's 44px status-bar spacer. */
-  .header { position: sticky; top: 0; z-index: 15; background-color: var(--brand); padding: env(safe-area-inset-top) 12px 0; }
-  .header-tail { height: 36px; background: var(--brand); border-radius: 0 0 12px 12px; }
+  .header { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 15; background-color: var(--brand); padding: env(safe-area-inset-top) 12px 0; }
+  .header::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 300px; background: var(--brand); }
+  .header-tail { height: calc(80px + env(safe-area-inset-top)); background: var(--brand); border-radius: 0 0 12px 12px; }
   .header-row { height: 44px; display: flex; align-items: center; justify-content: space-between; }
   .logo { width: 72px; height: 24px; position: relative; }
   .logo img { position: absolute; inset: 11.11% 0 11.93% 0; width: 100%; height: 76.96%; }
