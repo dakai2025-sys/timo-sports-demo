@@ -1,0 +1,14 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10.5005" height="10.5001" viewBox="0 0 10.5005 10.5001" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Frame0001">
+<mask id="mask0_0_525" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="11" height="11">
+<circle id="Ellipse 1307" cx="5.25046" cy="5.25011" r="5.25" fill="#E95455"/>
+</mask>
+<g mask="url(#mask0_0_525)">
+<rect id="Rectangle 34625008" x="8.87236" y="1.00984" width="0.875" height="11.375" transform="rotate(45 8.87236 1.00984)" fill="#A03A3B"/>
+<path id="Vector 1" d="M7.94382 0.0815755L-0.0995248 8.12492" stroke="#FFECBD" stroke-width="0.328125" stroke-dasharray="0.44 0.88"/>
+<path id="Vector 3" d="M9.02731 -0.0728024L0.674612 8.2799" stroke="#FFECBD" stroke-width="0.328125" stroke-dasharray="0.44 0.88"/>
+<path id="Vector 4" d="M10.5734 1.47383L2.22067 9.82653" stroke="#FFECBD" stroke-width="0.328125" stroke-dasharray="0.44 0.88"/>
+<path id="Vector 2" d="M2.37622 10.5998L10.4196 2.55647" stroke="#FFECBD" stroke-width="0.328125" stroke-dasharray="0.44 0.88"/>
+</g>
+</g>
+</svg>

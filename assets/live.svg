@@ -1,0 +1,19 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="&#229;&#189;&#169;&#232;&#137;&#178;icon/&#231;&#155;&#180;&#230;&#146;&#173;">
+<g id="Rectangle 34625003 (Stroke)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.22222 0H21.7778C25.2142 0 28 2.78578 28 6.22222V21.7778C28 25.2142 25.2142 28 21.7778 28H6.22222C2.78578 28 0 25.2142 0 21.7778V6.22222C0 2.78578 2.78578 0 6.22222 0Z" fill="url(#paint0_linear_0_541)"/>
+<path d="M6.22266 0.5H21.7773C24.9376 0.5 27.5 3.06236 27.5 6.22266V21.7773C27.5 24.9376 24.9376 27.5 21.7773 27.5H6.22266C3.06236 27.5 0.5 24.9376 0.5 21.7773V6.22266C0.5 3.06236 3.06236 0.5 6.22266 0.5Z" stroke="#009440" stroke-opacity="0.2"/>
+</g>
+<path id="Polygon 7" d="M21 12.2679C22.3333 13.0377 22.3333 14.9623 21 15.7321L12 20.9282C10.6667 21.698 9 20.7358 9 19.1962L9 8.80385C9 7.26425 10.6667 6.302 12 7.0718L21 12.2679Z" fill="url(#paint1_linear_0_541)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_541" x1="14" y1="0" x2="14" y2="28" gradientUnits="userSpaceOnUse">
+<stop offset="0.4375" stop-color="#EEFFEB"/>
+<stop offset="1" stop-color="#CAE8D7"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_541" x1="14" y1="3.99999" x2="14" y2="24" gradientUnits="userSpaceOnUse">
+<stop stop-color="#2FE97F"/>
+<stop offset="1" stop-color="#009440"/>
+</linearGradient>
+</defs>
+</svg>

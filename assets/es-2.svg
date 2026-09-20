@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 427320765">
+<circle id="Ellipse 1303" cx="6" cy="6" r="6" fill="url(#paint0_radial_0_480)"/>
+<path id="Vector 6" d="M8.66674 3.33335H4.00007V8.66669H8.66674M4.00007 6.00002H8.66674" stroke="white" stroke-width="1.33333" stroke-linejoin="round"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_480" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(6) rotate(90) scale(12 6)">
+<stop stop-color="#00E764"/>
+<stop offset="0.206494" stop-color="#00E563"/>
+<stop offset="1" stop-color="#009440"/>
+</radialGradient>
+</defs>
+</svg>

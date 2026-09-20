@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#009440">
+<title>TIMO 体育</title>
+<style>
+  :root {
+    --brand: #009440;
+    --brand-text: #fedf00;
+    --bg: #f3f5f7;
+    --card: #fff;
+    --t1: #333;
+    --t2: #666;
+    --t3: #959799;
+    --line: #e4e7ea;
+    --up: #e5484d;
+    --down: #009440;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { background: #dfe3e7; }
+  body {
+    background: #dfe3e7;
+    font-family: "PingFang HK", "PingFang SC", -apple-system, "Helvetica Neue", "Microsoft YaHei", sans-serif;
+    color: var(--t1); font-size: 12px; line-height: 16px;
+  }
+  button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+  img { display: block; }
+  .app { position: relative; max-width: 480px; min-height: 100vh; margin: 0 auto; background: var(--bg); padding-bottom: calc(var(--navh) + 12px); overflow-x: clip; }
+  .hscroll { display: flex; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .hscroll::-webkit-scrollbar { display: none; }
+
+  /* Header */
+  .header { background: var(--brand); padding: 44px 12px 32px; border-radius: 0 0 12px 12px; }
+  .header-row { height: 44px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { width: 72px; height: 24px; position: relative; }
+  .logo img { position: absolute; inset: 11.11% 0 11.93% 0; width: 100%; height: 76.96%; }
+  .header-right { display: flex; gap: 4px; }
+  .liquid {
+    position: relative; border-radius: 50px; background: rgba(255,255,255,.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 4px rgba(0,0,0,.04), 0 4px 8px rgba(0,0,0,.08), inset 1px 1px 0 rgba(255,255,255,.3), inset -1px -1px 0 rgba(255,255,255,.5);
+  }
+  .balance { height: 30px; min-width: 119px; padding: 0 8px; display: flex; align-items: center; gap: 4px; font-weight: 600; color: #fff; }
+  .balance .cur { color: var(--brand-text); }
+  .balance .amt { flex: 1; text-align: left; font-variant-numeric: tabular-nums; }
+  .balance img { width: 12px; height: 12px; }
+  .avatar { width: 30px; height: 30px; overflow: hidden; }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .content { margin-top: -30px; padding: 0 8px; display: flex; flex-direction: column; gap: 8px; position: relative; }
+
+  /* Sport tab */
+  .tab { background: rgba(255,255,255,.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 16px; padding: 8px; gap: 12px; height: 52px; align-items: center; }
+  .tab button { flex: none; height: 36px; padding: 4px 8px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: background .2s, transform .15s; }
+  .tab button:active { transform: scale(.92); }
+  .tab button.on { background: rgba(0,148,64,.12); box-shadow: inset 0 0 0 1.5px var(--brand); }
+  .ico { position: relative; width: 28px; height: 28px; flex: none; }
+  .ico > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ico.egames { width: 35px; height: 24px; }
+  .ico.cricket .bat { inset: 0 3.12% 1.94% 2.23%; width: 94.65%; height: 98.06%; }
+  .ico.cricket .ball { position: absolute; inset: 60.42% 2.08% 2.08% 60.42%; }
+  .ico.cricket .ball img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ico.esports .grid { position: absolute; left: 1px; top: 1px; width: 26px; display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; align-items: center; }
+  .ico.esports .grid img { width: 12px; height: 12px; object-fit: cover; }
+
+  /* Featured cards */
+  .featured { gap: 8px; scroll-snap-type: x mandatory; margin: 0 -8px; padding: 0 8px; scroll-padding: 0 8px; }
+  .fcard { flex: none; width: 294px; background: var(--card); border-radius: 12px; padding: 8px; display: flex; flex-direction: column; gap: 8px; scroll-snap-align: start; }
+  .fhead { display: flex; justify-content: space-between; color: var(--t2); }
+  .fhead .l { display: flex; gap: 8px; align-items: center; }
+  .fhead .time { color: var(--t3); }
+  .vsep { width: 1px; height: 12px; background: var(--line); }
+  .teams { display: flex; }
+  .teams .names { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .teams .names div { height: 24px; display: flex; align-items: center; gap: 2px; }
+  .teams .names div:last-child { height: 16px; }
+  .var { width: 26px; height: 26px; }
+  .scores { display: flex; flex-direction: column; font-weight: 600; font-size: 14px; line-height: 18px; text-align: center; }
+  .scores span { flex: 1; display: flex; align-items: center; justify-content: center; transition: color .3s; }
+  .scores .lead { color: var(--brand); }
+  .scores .goal { animation: goal 1.2s; }
+  @keyframes goal { 0%,60% { transform: scale(1.6); color: var(--up); } }
+
+  .odds-row { display: flex; gap: 4px; }
+  .odd {
+    flex: 1; min-width: 0; height: 36px; padding: 0 8px; border-radius: 8px; background: var(--bg);
+    display: flex; align-items: center; justify-content: space-between; font-size: 14px; line-height: 18px;
+    transition: background .15s, transform .1s;
+  }
+  .odd:active { transform: scale(.97); }
+  .odd .k { color: var(--t3); }
+  .odd .v { font-weight: 600; display: flex; align-items: center; gap: 3px; font-variant-numeric: tabular-nums; }
+  .odd .v::before { content: ""; border: 4px solid transparent; display: none; }
+  .odd.up .v { color: var(--up); } .odd.up .v::before { display: block; border-bottom-color: var(--up); margin-top: -4px; }
+  .odd.down .v { color: var(--down); } .odd.down .v::before { display: block; border-top-color: var(--down); margin-bottom: -4px; }
+  .odd.sel { background: var(--brand); }
+  .odd.sel .k { color: rgba(255,255,255,.75); }
+  .odd.sel .v { color: #fff; }
+
+  /* Banner */
+  .banner { height: 70px; border-radius: 12px; overflow: hidden; background: var(--card); position: relative; display: flex; align-items: center; padding: 0 12px; width: 100%; text-align: left; }
+  .banner .club { width: 40px; height: 40px; object-fit: cover; margin-right: 4px; }
+  .banner p { line-height: 20px; white-space: nowrap; }
+  .banner .t1 { font-size: 16px; } .banner .t2 { font-size: 14px; font-weight: 600; }
+  .banner .hero { position: absolute; right: -8px; top: -8px; width: 160px; height: 160px; overflow: hidden;
+    -webkit-mask: url(assets/monaco-mask.svg) 0 0/160px 160px no-repeat; mask: url(assets/monaco-mask.svg) 0 0/160px 160px no-repeat; mask-mode: alpha; }
+  .banner .hero img { position: absolute; height: 140%; width: 210.05%; left: -62.65%; top: -2.83%; max-width: none; transition: transform .4s; }
+  .banner:active .hero img { transform: scale(1.05); }
+
+  /* Section title */
+  .sec-title { height: 32px; display: flex; align-items: center; justify-content: space-between; }
+  .sec-title h2 { font-size: 18px; line-height: 22px; font-weight: 600; }
+  .more { background: var(--card); border-radius: 20px; padding: 2px 2px 2px 8px; display: flex; align-items: center; gap: 4px; color: var(--t3); font-weight: 600; }
+  .more img { width: 20px; height: 20px; transition: transform .25s; }
+  .more.open img { transform: rotate(90deg); }
+
+  /* Players */
+  .players { background: var(--card); border-radius: 12px; padding: 8px; gap: 8px; }
+  .players.wrap { flex-wrap: wrap; }
+  .player { flex: none; width: 72px; padding: 8px; border-radius: 8px; background: var(--bg); display: flex; flex-direction: column; align-items: center; gap: 8px; transition: transform .15s, box-shadow .2s; }
+  .player:active { transform: scale(.95); }
+  .player.on { box-shadow: inset 0 0 0 1.5px var(--brand); background: rgba(0,148,64,.08); }
+  .player .pic { position: relative; width: 32px; height: 32px; border-radius: 50%; overflow: hidden; }
+  .player .pic img { position: absolute; top: 0; height: 181.25%; aspect-ratio: 1; left: calc(50% + 4px); transform: translateX(-50%); max-width: none; }
+  .player span { height: 26px; font-size: 10px; line-height: 13px; text-align: center; overflow: hidden; display: flex; align-items: center; }
+
+  /* Live */
+  .ltab { background: rgba(255,255,255,.9); border-radius: 12px; height: 48px; padding: 4px 12px; gap: 16px; align-items: center; }
+  .ltab button { flex: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background .2s, transform .15s; }
+  .ltab button:active { transform: scale(.9); }
+  .ltab button.on { background: var(--brand); }
+  .ltab .ico { width: 24px; height: 24px; }
+  .ltab .ico.egames { width: 30px; height: 21px; }
+  .ltab .ico.esports .grid { transform: scale(.857); transform-origin: 0 0; }
+
+  .lcards { display: flex; flex-direction: column; gap: 8px; }
+  .lcard { background: var(--card); border-radius: 12px; padding: 8px; display: flex; flex-direction: column; gap: 8px; animation: fadein .3s both; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(8px); } }
+  .info { display: flex; gap: 8px; align-items: center; }
+  .info .state { height: 40px; min-width: 40px; display: flex; flex-direction: column; justify-content: center; gap: 4px; white-space: nowrap; }
+  .info .state div { display: flex; gap: 2px; align-items: center; }
+  .info .state img { width: 16px; height: 16px; }
+  .info .state .clock { color: var(--brand); font-variant-numeric: tabular-nums; }
+  .info .hsep { width: 1px; height: 36px; background: var(--line); }
+  .info .mid { flex: 1; min-width: 0; }
+  .info .mid > div { height: 20px; display: flex; align-items: center; gap: 4px; }
+  .info .mid .n { flex: 1; min-width: 0; display: flex; align-items: center; gap: 2px; white-space: nowrap; }
+  .pk { display: flex; gap: 4px; align-items: center; }
+  .pk i { position: relative; width: 6px; height: 6px; }
+  .pk i img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .pk i.cur img { inset: -3px; width: 12px; height: 12px; animation: pulse 1s infinite alternate; }
+  @keyframes pulse { to { opacity: .4; } }
+  .pkrow2 { width: 46px; height: 6px; }
+  .info .scores { align-self: stretch; }
+  .ginfo { width: 36px; height: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+  .ginfo .cnt { height: 28px; margin-bottom: -9px; color: var(--t3); display: flex; align-items: center; }
+  .ginfo .vid { position: relative; width: 36px; height: 28px; display: flex; align-items: center; justify-content: center; }
+  .ginfo .vid .bg { position: absolute; left: 50%; top: 50%; width: 28px; height: 20px; transform: translate(-50%,-50%); border-radius: 2px; overflow: hidden; }
+  .ginfo .vid .bg img { width: 100%; height: 100%; object-fit: cover; }
+  .ginfo .vid .bg::after { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.2); }
+  .ginfo .vid .pl { position: relative; width: 12px; height: 12px; }
+  .lcard .odds-row { gap: 6px; }
+  .empty { background: var(--card); border-radius: 12px; padding: 32px; text-align: center; color: var(--t3); font-size: 14px; }
+
+  .all-live { width: 100%; background: var(--brand); color: #fff; border-radius: 30px; padding: 10px 12px; display: flex; gap: 4px; align-items: center; justify-content: center; font-size: 14px; line-height: 18px; transition: opacity .15s; }
+  .all-live:active { opacity: .85; }
+  .all-live img { width: 20px; height: 20px; transition: transform .25s; }
+  .all-live.open img { transform: rotate(-90deg); }
+
+  /* Bottom nav — iOS liquid glass, one panel running to the screen edge so Safari's floating URL bar sits on it */
+  :root { --navh: calc(60px + env(safe-area-inset-bottom)); }
+  .nav { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 20;
+    padding-bottom: env(safe-area-inset-bottom); border-radius: 28px 28px 0 0;
+    background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.55));
+    backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+    box-shadow: 0 -4px 24px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.95), inset 1px 0 0 rgba(255,255,255,.5), inset -1px 0 0 rgba(255,255,255,.5); }
+  .nav::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 200px; background: rgba(255,255,255,.55); }
+  .nav-row { height: 60px; padding: 4px 12px; display: flex; justify-content: space-between; align-items: center; }
+  @media (hover: none) { html { background: var(--bg); } }
+  .nav button { width: 52px; height: 52px; border-radius: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 10px; line-height: 13px; transition: background .25s, box-shadow .25s, color .2s, transform .15s; }
+  .nav button:active { transform: scale(.92); }
+  .nav button span.i { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; transition: transform .2s; }
+  .nav button span.i i { display: block; width: 22px; height: 22px; background: var(--t1); transition: background .2s;
+    -webkit-mask: var(--m) center/100% 100% no-repeat; mask: var(--m) center/100% 100% no-repeat; }
+  .nav button.big span.i i { width: 26px; height: 26px; }
+  .nav button.on { color: var(--brand); font-weight: 600; background: rgba(0,148,64,.12);
+    box-shadow: inset 0 0 0 1px rgba(0,148,64,.18), inset 1px 1px 0 rgba(255,255,255,.6), 0 2px 8px rgba(0,148,64,.12); }
+  .nav button.on span.i i { background: var(--brand); }
+  .nav button.on span.i { transform: translateY(-1px) scale(1.06); }
+
+  /* Bet slip */
+  .slip-pill { position: fixed; left: 50%; bottom: calc(var(--navh) + 12px); z-index: 19; transform: translate(-50%, 80px); opacity: 0;
+    background: var(--t1); color: #fff; border-radius: 30px; padding: 10px 16px; display: flex; gap: 8px; align-items: center; font-size: 14px; line-height: 18px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25); transition: transform .3s cubic-bezier(.2,.9,.3,1.2), opacity .2s; white-space: nowrap; }
+  .slip-pill.show { transform: translate(-50%, 0); opacity: 1; }
+  .slip-pill b { background: var(--brand); border-radius: 10px; min-width: 20px; height: 20px; padding: 0 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
+  .slip-pill em { font-style: normal; color: var(--brand-text); font-weight: 600; }
+
+  .mask { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 30; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .mask.show { opacity: 1; pointer-events: auto; }
+  .sheet { position: fixed; left: 50%; bottom: 0; width: 100%; max-width: 480px; z-index: 31; background: var(--bg); border-radius: 16px 16px 0 0;
+    transform: translate(-50%, 100%); transition: transform .3s cubic-bezier(.2,.8,.2,1); padding: 12px 12px calc(12px + env(safe-area-inset-bottom)); max-height: 80vh; display: flex; flex-direction: column; gap: 8px; }
+  .sheet.show { transform: translate(-50%, 0); }
+  .sheet header { display: flex; justify-content: space-between; align-items: center; }
+  .sheet h3 { font-size: 16px; line-height: 22px; }
+  .sheet header button { color: var(--t3); font-size: 12px; padding: 4px; }
+  .sheet .list { overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+  .sitem { background: var(--card); border-radius: 12px; padding: 10px; display: flex; gap: 8px; align-items: center; }
+  .sitem .d { flex: 1; min-width: 0; }
+  .sitem .d p:first-child { font-size: 14px; line-height: 18px; font-weight: 600; }
+  .sitem .d p:last-child { color: var(--t2); }
+  .sitem .o { font-size: 16px; font-weight: 600; color: var(--brand); font-variant-numeric: tabular-nums; }
+  .sitem .x { width: 24px; height: 24px; border-radius: 50%; background: var(--bg); color: var(--t3); font-size: 14px; line-height: 24px; }
+  .stake { background: var(--card); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .stake .row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; line-height: 18px; }
+  .stake input { width: 140px; height: 36px; border: 1.5px solid var(--line); border-radius: 8px; padding: 0 8px; font: inherit; font-size: 16px; font-weight: 600; text-align: right; outline: none; background: var(--bg); color: var(--t1); }
+  .stake input:focus { border-color: var(--brand); }
+  .chips { display: flex; gap: 6px; }
+  .chips button { flex: 1; height: 30px; border-radius: 8px; background: var(--bg); font-weight: 600; }
+  .chips button:active { background: rgba(0,148,64,.15); }
+  .stake .win b { color: var(--brand); font-size: 16px; font-variant-numeric: tabular-nums; }
+  .place { width: 100%; height: 44px; border-radius: 30px; background: var(--brand); color: #fff; font-size: 16px; font-weight: 600; }
+  .place:disabled { opacity: .4; cursor: not-allowed; }
+
+  .toast { position: fixed; left: 50%; top: 50%; z-index: 40; transform: translate(-50%,-50%) scale(.9); opacity: 0; pointer-events: none;
+    background: rgba(0,0,0,.8); color: #fff; border-radius: 10px; padding: 10px 16px; font-size: 14px; line-height: 20px; max-width: 80%; text-align: center; transition: opacity .2s, transform .2s; }
+  .toast.show { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-row">
+      <div class="logo"><img src="assets/logo.svg" alt="DEMO"></div>
+      <div class="header-right">
+        <button class="liquid balance" id="balance" aria-label="余额">
+          <span class="cur">CNY</span><span class="amt" id="amt"></span><img src="assets/plus.svg" alt="">
+        </button>
+        <button class="liquid avatar" id="avatar" aria-label="我的"><img src="assets/avatar.png" alt=""></button>
+      </div>
+    </div>
+  </div>
+
+  <main class="content">
+    <nav class="tab hscroll" id="tab"></nav>
+    <section class="featured hscroll" id="featured"></section>
+
+    <button class="banner" id="banner">
+      <img class="club" src="assets/monaco-logo.png" alt="">
+      <div><p class="t1">6686官方合作伙伴</p><p class="t2">摩纳哥足球俱乐部</p></div>
+      <div class="hero"><img src="assets/monaco-player.png" alt=""></div>
+    </button>
+
+    <section>
+      <div class="sec-title"><h2>球星</h2>
+        <button class="more" id="playersMore"><span>28</span><img src="assets/arrow.svg" alt=""></button></div>
+      <div class="players hscroll" id="players" style="margin-top:8px"></div>
+    </section>
+
+    <section id="liveSec" style="display:flex;flex-direction:column;gap:8px;scroll-margin-top:8px">
+      <div class="sec-title"><h2>滚球</h2>
+        <button class="more" id="liveMore"><span id="liveCnt">28</span><img src="assets/arrow.svg" alt=""></button></div>
+      <nav class="ltab hscroll" id="ltab"></nav>
+      <div class="lcards" id="lcards"></div>
+      <button class="all-live" id="allLive"><span id="allLiveTxt">所有滚球</span><span id="allLiveCnt">228</span><img src="assets/arrow-white.svg" alt=""></button>
+    </section>
+  </main>
+
+  <nav class="nav" id="nav">
+   <div class="nav-row">
+    <button class="on" data-k="sport"><span class="i"><i style="--m:url('assets/nav-sport.svg')"></i></span>体育</button>
+    <button data-k="live"><span class="i"><i style="--m:url('assets/nav-live.svg')"></i></span>滚球</button>
+    <button class="big" data-k="esport"><span class="i"><i style="--m:url('assets/nav-esport.svg')"></i></span>电竞</button>
+    <button class="big" data-k="me"><span class="i"><i style="--m:url('assets/nav-me.svg')"></i></span>我的</button>
+    <button class="big" data-k="casino"><span class="i"><i style="--m:url('assets/nav-casino.svg')"></i></span>娱乐城</button>
+   </div>
+  </nav>
+
+  <button class="slip-pill" id="pill">投注单 <b id="pillN">0</b><span>总赔率 <em id="pillO"></em></span></button>
+</div>
+
+<div class="mask" id="mask"></div>
+<div class="sheet" id="sheet" role="dialog" aria-label="投注单">
+  <header><h3>投注单</h3><button id="clearSlip">清空</button></header>
+  <div class="list" id="slipList"></div>
+  <div class="stake">
+    <div class="row"><span>投注金额 (CNY)</span><input id="stake" type="number" inputmode="decimal" min="0" placeholder="0.00"></div>
+    <div class="chips"><button data-v="100">+100</button><button data-v="500">+500</button><button data-v="1000">+1000</button><button data-v="max">最大</button></div>
+    <div class="row win"><span id="slipType">单关</span><span>预计可赢 <b id="win">0.00</b></span></div>
+  </div>
+  <button class="place" id="place" disabled>确认投注</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const A = 'assets/';
+const img = (f, c = '') => `<img ${c ? `class="${c}"` : ''} src="${A}${f}" alt="">`;
+const cricket = `<span class="ico cricket">${img('cricket-bat.svg', 'bat')}<span class="ball">${img('cricket-b1.svg')}${img('cricket-b2.svg')}${img('cricket-b3.svg')}</span></span>`;
+const esports = `<span class="ico esports"><span class="grid">${img('soccer.png')}${img('es-2.svg')}${img('es-3.svg')}${img('basketball.png')}</span></span>`;
+const ico = (f, c = '') => `<span class="ico ${c}">${img(f)}</span>`;
+
+const SPORTS = {
+  fav: ['收藏', ico('fav.svg')], hot: ['热门', ico('hot.png')], soccer: ['足球', ico('soccer.png')],
+  basketball: ['篮球', ico('basketball.png')], tennis: ['网球', ico('tennis.png')], tabletennis: ['乒乓球', ico('tabletennis.svg')],
+  cricket: ['板球', cricket], egames: ['电子竞技', ico('egames.svg', 'egames')], esports: ['电竞体育', esports],
+  baseball: ['棒球', ico('baseball.png')], live: ['直播', ico('live.svg')], stream: ['广场', ico('stream.png')],
+  tv: ['直播', ico('live-tv.png')], casino: ['真人', ico('live-casino.png')],
+};
+const TOP_TABS = ['fav', 'hot', 'soccer', 'basketball', 'tennis', 'tabletennis', 'cricket', 'egames', 'esports', 'baseball', 'live', 'stream'];
+const LIVE_TABS = ['soccer', 'basketball', 'tennis', 'tabletennis', 'cricket', 'egames', 'esports', 'baseball', 'tv', 'casino'];
+
+const POOL = {
+  soccer: { lg: ['西班牙足球甲级联赛', '英格兰超级联赛', '意大利甲级联赛', '德国甲级联赛'], tm: [['曼彻斯特', '切尔西'], ['皇家马德里', '巴塞罗那'], ['拜仁慕尼黑', '多特蒙德'], ['AC米兰', '尤文图斯'], ['利物浦', '阿森纳'], ['摩纳哥', '巴黎圣日耳曼']], draw: true, max: 4 },
+  basketball: { lg: ['NBA', 'CBA', '欧洲篮球联赛'], tm: [['洛杉矶湖人', '金州勇士'], ['波士顿凯尔特人', '迈阿密热火'], ['广东宏远', '辽宁本钢'], ['丹佛掘金', '菲尼克斯太阳']], draw: false, max: 110 },
+  tennis: { lg: ['ATP 上海大师赛', 'WTA 武汉公开赛'], tm: [['阿尔卡拉斯', '辛纳'], ['德约科维奇', '兹维列夫'], ['郑钦文', '萨巴伦卡']], draw: false, max: 2 },
+  tabletennis: { lg: ['WTT 冠军赛', '乒超联赛'], tm: [['王楚钦', '张本智和'], ['孙颖莎', '早田希娜'], ['樊振东', '林诗栋']], draw: false, max: 3 },
+  cricket: { lg: ['印度超级联赛', 'T20 世界杯'], tm: [['孟买印度人', '金奈超级王者'], ['澳大利亚', '英格兰']], draw: false, max: 180 },
+  egames: { lg: ['LPL 夏季赛', 'DOTA2 国际邀请赛', 'CS2 Major'], tm: [['BLG', 'TES'], ['T1', 'GEN'], ['Team Spirit', 'Falcons'], ['NAVI', 'Vitality']], draw: false, max: 2 },
+  esports: { lg: ['电竞足球 GT联赛', '电竞篮球 H2H'], tm: [['曼城 (电竞)', '皇马 (电竞)'], ['湖人 (电竞)', '公牛 (电竞)'], ['阿根廷 (电竞)', '法国 (电竞)']], draw: true, max: 5 },
+  baseball: { lg: ['MLB', '日本职棒'], tm: [['洛杉矶道奇', '纽约洋基'], ['读卖巨人', '阪神虎']], draw: false, max: 9 },
+};
+['hot', 'fav', 'live', 'stream', 'tv', 'casino'].forEach(k => POOL[k] = POOL.soccer);
+
+/* ---------- state ---------- */
+let balance = 89890, uid = 0, topSport = 'soccer', liveSport = 'soccer', expanded = false;
+const matches = {};            // id -> match
+const slip = new Map();        // "matchId:key" -> true
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const fmt = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function makeMatch(sport, i, opt = {}) {
+  const p = POOL[sport], tm = p.tm[i % p.tm.length], id = 'm' + (++uid);
+  const keys = opt.pk || !p.draw ? ['1', '2'] : ['1', 'X', '2'];
+  const odds = {}; keys.forEach(k => odds[k] = +rnd(1.4, 3.6).toFixed(2));
+  const hi = Math.min(p.max, 4);
+  return matches[id] = { id, sport, league: p.lg[i % p.lg.length], home: tm[0], away: tm[1],
+    s: [Math.floor(rnd(0, hi + 1)), Math.floor(rnd(0, hi + 1))], sec: Math.floor(rnd(60, 5200)),
+    odds, keys, markets: Math.floor(rnd(8, 180)), pk: !!opt.pk, varIcon: sport === 'soccer' && i % 2 === 0 };
+}
+const cache = {};
+function getSet(kind, sport) {
+  const key = kind + sport;
+  if (!cache[key]) {
+    const n = kind === 'f' ? 4 : 8;
+    cache[key] = Array.from({ length: n }, (_, i) => makeMatch(sport, i + (kind === 'f' ? 0 : 1), { pk: kind === 'l' && sport === 'soccer' && i === 0 }));
+    if (kind === 'l' && sport === 'soccer') Object.assign(cache[key][0], { home: '曼彻斯特', away: '切尔西', s: [3, 2], markets: 128, varIcon: true });
+  }
+  return cache[key];
+}
+const clock = m => `${String(Math.floor(m.sec / 60)).padStart(2, '0')}:${String(m.sec % 60).padStart(2, '0')}`;
+
+/* ---------- render ---------- */
+function oddsRow(m) {
+  return `<div class="odds-row">${m.keys.map(k =>
+    `<button class="odd${slip.has(m.id + ':' + k) ? ' sel' : ''}" data-m="${m.id}" data-k="${k}"><span class="k">${k}</span><span class="v">${m.odds[k].toFixed(2)}</span></button>`).join('')}</div>`;
+}
+const scoreHtml = m => `<div class="scores" data-score="${m.id}"><span class="${m.s[0] > m.s[1] ? 'lead' : ''}">${m.s[0]}</span><span class="${m.s[1] > m.s[0] ? 'lead' : ''}">${m.s[1]}</span></div>`;
+const varHtml = m => m.varIcon ? img('var.svg', 'var') : '';
+
+function renderTabs() {
+  $('#tab').innerHTML = TOP_TABS.map(k => `<button class="${k === topSport ? 'on' : ''}" data-s="${k}" aria-label="${SPORTS[k][0]}">${SPORTS[k][1]}</button>`).join('');
+  $('#ltab').innerHTML = LIVE_TABS.map(k => `<button class="${k === liveSport ? 'on' : ''}" data-s="${k}" aria-label="${SPORTS[k][0]}">${SPORTS[k][1]}</button>`).join('');
+}
+function renderFeatured() {
+  $('#featured').innerHTML = getSet('f', topSport).map(m => `
+    <article class="fcard">
+      <div class="fhead"><div class="l"><span class="time" data-clock="${m.id}">${clock(m)}</span><span class="vsep"></span><span>${m.league}</span></div><span>${m.markets}</span></div>
+      <div class="teams"><div class="names"><div>${m.home}${varHtml(m)}</div><div>${m.away}</div></div>${scoreHtml(m)}</div>
+      ${oddsRow(m)}
+    </article>`).join('');
+  $('#featured').scrollTo({ left: 0 });
+}
+function renderLive() {
+  const all = getSet('l', liveSport), list = expanded ? all : all.slice(0, 3);
+  const pkDots = `<div class="pk"><i>${img('pk-1.svg')}</i><i>${img('pk-2.svg')}</i><i>${img('pk-2.svg')}</i><i class="cur">${img('pk-cur.svg')}</i><i>${img('pk-empty.svg')}</i></div>`;
+  $('#lcards').innerHTML = list.map((m, i) => `
+    <article class="lcard" style="animation-delay:${i * 40}ms">
+      <div class="info">
+        <div class="state">${m.pk ? `<span>点球PK</span><div><span>第4局</span>${img('gameinfo.svg')}</div>` : `<span class="clock" data-clock="${m.id}">${clock(m)}</span>`}</div>
+        <span class="hsep"></span>
+        <div class="mid"><div><span class="n">${m.home}${varHtml(m)}</span>${m.pk ? pkDots : ''}</div><div><span class="n">${m.away}</span>${m.pk ? img('pk-row2.svg', 'pkrow2') : ''}</div></div>
+        ${scoreHtml(m)}
+        <span class="hsep"></span>
+        <button class="ginfo" data-video="${m.id}"><span class="cnt">${m.markets}</span><span class="vid"><span class="bg">${img('video-bg.png')}</span>${img('play.svg', 'pl')}</span></button>
+      </div>
+      ${oddsRow(m)}
+    </article>`).join('');
+  $('#liveCnt').textContent = all.length * 3 + 4;
+  $('#allLive').classList.toggle('open', expanded);
+  $('#allLiveTxt').textContent = expanded ? '收起' : '所有滚球';
+  $('#allLiveCnt').style.display = expanded ? 'none' : '';
+}
+const NAMES = ['埃尔林·哈兰德', '马里奥·巴洛特利', '奥斯曼·登贝莱', '查洛·宝云', '基利安·姆巴佩', '穆罕默德·萨拉赫', '哈里·凯恩', '裘德·贝林厄姆', '维尼修斯', '拉明·亚马尔', '凯文·德布劳内', '罗伯特·莱万', '布卡约·萨卡', '孙兴慜', '佩德里', '罗德里', '菲尔·福登', '弗洛里安·维尔茨'];
+function renderPlayers() {
+  $('#players').innerHTML = NAMES.map((n, i) => `<button class="player" data-p="${i}"><span class="pic">${img('player.png')}</span><span>${n}</span></button>`).join('');
+}
+
+/* ---------- bet slip ---------- */
+function slipItems() { return [...slip.keys()].map(k => { const [id, key] = k.split(':'); return { k, m: matches[id], key }; }); }
+function totalOdds() { return slipItems().reduce((a, x) => a * x.m.odds[x.key], 1); }
+function updateSlip() {
+  const items = slipItems(), n = items.length, stake = parseFloat($('#stake').value) || 0;
+  $('#pill').classList.toggle('show', n > 0 && !$('#sheet').classList.contains('show'));
+  $('#pillN').textContent = n; $('#pillO').textContent = totalOdds().toFixed(2);
+  const label = k => k === 'X' ? '和局' : k === '1' ? '主胜' : '客胜';
+  $('#slipList').innerHTML = items.map(x => `<div class="sitem"><div class="d"><p>${label(x.key)} · ${x.key === '2' ? x.m.away : x.key === '1' ? x.m.home : '平'}</p><p>${x.m.home} vs ${x.m.away}</p></div><span class="o">${x.m.odds[x.key].toFixed(2)}</span><button class="x" data-rm="${x.k}" aria-label="移除">×</button></div>`).join('');
+  $('#slipType').textContent = n > 1 ? `${n}串1 @ ${totalOdds().toFixed(2)}` : '单关';
+  $('#win').textContent = fmt(stake * totalOdds() - stake > 0 ? stake * totalOdds() - stake : 0);
+  $('#place').disabled = !(n && stake > 0 && stake <= balance);
+  $('#place').textContent = stake > balance ? '余额不足' : '确认投注';
+  if (!n) closeSheet();
+}
+function toggleOdd(id, key) {
+  const k = id + ':' + key;
+  if (slip.has(k)) slip.delete(k);
+  else { [...slip.keys()].filter(x => x.startsWith(id + ':')).forEach(x => slip.delete(x)); slip.set(k, true); }
+  document.querySelectorAll(`.odd[data-m="${id}"]`).forEach(b => b.classList.toggle('sel', slip.has(id + ':' + b.dataset.k)));
+  updateSlip();
+}
+function openSheet() { $('#sheet').classList.add('show'); $('#mask').classList.add('show'); $('#pill').classList.remove('show'); }
+function closeSheet() { $('#sheet').classList.remove('show'); $('#mask').classList.remove('show'); $('#pill').classList.toggle('show', slip.size > 0); }
+
+let toastT;
+function toast(t) { const e = $('#toast'); e.textContent = t; e.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('show'), 1600); }
+function setBalance(v) {
+  const from = balance, t0 = performance.now(); balance = v;
+  (function step(t) { const p = Math.min(1, (t - t0) / 500); $('#amt').textContent = fmt(from + (v - from) * p); if (p < 1) requestAnimationFrame(step); })(t0);
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', e => {
+  const odd = e.target.closest('.odd'); if (odd) return toggleOdd(odd.dataset.m, odd.dataset.k);
+  const rm = e.target.closest('[data-rm]'); if (rm) { const [id, key] = rm.dataset.rm.split(':'); return toggleOdd(id, key); }
+  const vid = e.target.closest('[data-video]'); if (vid) { const m = matches[vid.dataset.video]; return toast(`▶ ${m.home} vs ${m.away} 直播（演示）`); }
+  const pl = e.target.closest('.player'); if (pl) { pl.classList.toggle('on'); return toast((pl.classList.contains('on') ? '已关注 ' : '已取消关注 ') + NAMES[pl.dataset.p]); }
+});
+$('#tab').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  topSport = b.dataset.s; renderTabs(); renderFeatured();
+  $(`#tab [data-s="${topSport}"]`).scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  if (LIVE_TABS.includes(topSport)) { liveSport = topSport; expanded = false; renderTabs(); renderLive(); }
+});
+$('#ltab').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  liveSport = b.dataset.s; expanded = false; renderTabs(); renderLive();
+  $(`#ltab [data-s="${liveSport}"]`).scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+});
+const toggleAll = () => { expanded = !expanded; renderLive(); $('#liveMore').classList.toggle('open', expanded); if (!expanded) $('#liveSec').scrollIntoView({ behavior: 'smooth' }); };
+$('#allLive').onclick = toggleAll; $('#liveMore').onclick = toggleAll;
+$('#playersMore').onclick = e => { const w = $('#players').classList.toggle('wrap'); e.currentTarget.classList.toggle('open', w); };
+$('#banner').onclick = () => toast('摩纳哥足球俱乐部 × 6686 官方合作伙伴');
+$('#balance').onclick = () => { setBalance(balance + 1000); toast('充值成功 +1,000.00（演示）'); updateSlip(); };
+$('#avatar').onclick = () => toast('个人中心（演示）');
+$('#nav').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('#nav button').forEach(x => x.classList.toggle('on', x === b));
+  const k = b.dataset.k;
+  if (k === 'sport') window.scrollTo({ top: 0, behavior: 'smooth' });
+  else if (k === 'live') $('#liveSec').scrollIntoView({ behavior: 'smooth' });
+  else if (k === 'esport') { $('#ltab [data-s="egames"]').click(); $('#liveSec').scrollIntoView({ behavior: 'smooth' }); }
+  else toast(b.textContent.trim() + '（演示）');
+});
+$('#pill').onclick = openSheet; $('#mask').onclick = closeSheet;
+$('#clearSlip').onclick = () => { slip.clear(); document.querySelectorAll('.odd.sel').forEach(b => b.classList.remove('sel')); updateSlip(); };
+$('#stake').oninput = updateSlip;
+document.querySelector('.chips').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const cur = parseFloat($('#stake').value) || 0;
+  $('#stake').value = b.dataset.v === 'max' ? Math.floor(balance) : Math.min(cur + +b.dataset.v, Math.floor(balance)); updateSlip();
+});
+$('#place').onclick = () => {
+  const stake = parseFloat($('#stake').value) || 0, n = slip.size;
+  setBalance(balance - stake); slip.clear(); $('#stake').value = '';
+  document.querySelectorAll('.odd.sel').forEach(b => b.classList.remove('sel'));
+  updateSlip(); toast(`投注成功！${n > 1 ? n + '串1' : '单关'} ${fmt(stake)} CNY`);
+};
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+
+/* ---------- live simulation ---------- */
+setInterval(() => {
+  Object.values(matches).forEach(m => { if (!m.pk) m.sec++; });
+  document.querySelectorAll('[data-clock]').forEach(el => el.textContent = clock(matches[el.dataset.clock]));
+}, 1000);
+setInterval(() => {
+  const vis = [...new Set([...document.querySelectorAll('.odd')].map(b => b.dataset.m))];
+  for (let i = 0; i < 3; i++) {
+    const m = matches[pick(vis)], k = pick(m.keys), d = pick([-.1, -.05, .05, .1]);
+    m.odds[k] = Math.max(1.05, +(m.odds[k] + d).toFixed(2));
+    document.querySelectorAll(`.odd[data-m="${m.id}"][data-k="${k}"]`).forEach(b => {
+      b.querySelector('.v').textContent = m.odds[k].toFixed(2);
+      b.classList.remove('up', 'down'); b.classList.add(d > 0 ? 'up' : 'down');
+      setTimeout(() => b.classList.remove('up', 'down'), 2500);
+    });
+  }
+  if (Math.random() < .25) {
+    const m = matches[pick(vis)], side = pick([0, 1]); m.s[side]++;
+    document.querySelectorAll(`[data-score="${m.id}"]`).forEach(el => {
+      el.outerHTML = scoreHtml(m);
+    });
+    document.querySelectorAll(`[data-score="${m.id}"] span`).forEach((sp, i) => i === side && sp.classList.add('goal'));
+  }
+  if (slip.size) updateSlip();
+}, 2500);
+
+$('#amt').textContent = fmt(balance);
+renderTabs(); renderFeatured(); renderPlayers(); renderLive();
+</script>
+</body>
+</html>
